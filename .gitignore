@@ -1,0 +1,17 @@
+# Gradle / build output — matches at any depth (app/build, etc.)
+build/
+.gradle/
+.kotlin/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Local machine config — contains this machine's SDK path
+local.properties
+
+# IDE
+*.iml
+.idea/
+
+# macOS
+.DS_Store

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="home_text">#FFFFFFFF</color>
+    <color name="home_text_dim">#B3FFFFFF</color>
+    <color name="drawer_scrim">#F00D0D10</color>
+    <color name="translucent_white">#40FFFFFF</color>
+    <color name="status_ok">#FF2E7D32</color>
+    <color name="status_warn">#FFE65100</color>
+    <color name="icon_background">#FF1B1B1F</color>
+</resources>

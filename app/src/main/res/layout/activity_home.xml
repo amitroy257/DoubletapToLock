@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  Layer order matters, and it is the reason single taps still work.
+
+  A FrameLayout dispatches ACTION_DOWN to its children in reverse order — topmost first.
+  @id/content is a plain LinearLayout that is NOT clickable, so it declines any touch that
+  does not land on one of its clickable descendants, and the event falls through to
+  @id/wallpaperTapTarget underneath.
+
+  Net effect:
+    • tap an app icon  -> the icon consumes it, fires immediately, never sees the detector
+    • tap bare wallpaper -> reaches wallpaperTapTarget, where double-tap-to-lock lives
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- LAYER 1 (bottom): gesture surface, deliberately full-screen and edge-to-edge. -->
+    <View
+        android:id="@+id/wallpaperTapTarget"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- LAYER 2 (top): the visible UI. Must stay non-clickable as a container. -->
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false"
+        android:orientation="vertical">
+
+        <TextClock
+            android:id="@+id/clockTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:format12Hour="h:mm"
+            android:format24Hour="HH:mm"
+            android:gravity="center_horizontal"
+            android:shadowColor="#80000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="8"
+            android:textColor="@color/home_text"
+            android:textSize="64sp" />
+
+        <TextClock
+            android:id="@+id/clockDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:format12Hour="EEEE, d MMMM"
+            android:format24Hour="EEEE, d MMMM"
+            android:gravity="center_horizontal"
+            android:shadowColor="#80000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="8"
+            android:textColor="@color/home_text"
+            android:textSize="16sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/dockHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"
+            android:shadowColor="#80000000"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="8"
+            android:text="@string/dock_hint"
+            android:textColor="@color/home_text_dim"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:id="@+id/dockRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center"
+            android:orientation="horizontal" />
+
+        <ImageView
+            android:id="@+id/appsButton"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/bg_circle_translucent"
+            android:contentDescription="@string/apps_button_desc"
+            android:padding="14dp"
+            android:src="@drawable/ic_apps" />
+
+    </LinearLayout>
+
+</FrameLayout>

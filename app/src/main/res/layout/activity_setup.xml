@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/setupRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/setup_subtitle"
+                android:textSize="14sp" />
+
+            <!-- Step 1 -->
+            <TextView
+                style="@style/SetupHeading"
+                android:text="@string/setup_step_home" />
+
+            <TextView
+                android:id="@+id/homeStatus"
+                style="@style/SetupStatus" />
+
+            <TextView
+                style="@style/SetupBody"
+                android:text="@string/setup_step_home_body" />
+
+            <Button
+                android:id="@+id/setHomeButton"
+                style="@style/SetupButton"
+                android:text="@string/setup_open_home_settings" />
+
+            <!-- Step 2 -->
+            <TextView
+                style="@style/SetupHeading"
+                android:text="@string/setup_step_lock" />
+
+            <TextView
+                android:id="@+id/lockStatus"
+                style="@style/SetupStatus" />
+
+            <TextView
+                style="@style/SetupBody"
+                android:text="@string/setup_step_lock_body" />
+
+            <Button
+                android:id="@+id/grantAdminButton"
+                style="@style/SetupButton"
+                android:text="@string/setup_grant_admin" />
+
+            <Button
+                android:id="@+id/grantAccessibilityButton"
+                style="@style/SetupButtonOutlined"
+                android:text="@string/setup_grant_accessibility" />
+
+            <Button
+                android:id="@+id/revokeAdminButton"
+                style="@style/SetupButtonOutlined"
+                android:text="@string/setup_revoke_admin"
+                android:visibility="gone" />
+
+            <!-- Options -->
+            <TextView
+                style="@style/SetupHeading"
+                android:text="@string/setup_options" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/doubleTapSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/setup_double_tap_switch" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/hapticSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/setup_haptic_switch" />
+
+            <Button
+                android:id="@+id/testLockButton"
+                style="@style/SetupButton"
+                android:text="@string/setup_test_lock" />
+
+            <TextView
+                style="@style/SetupBody"
+                android:layout_marginTop="28dp"
+                android:text="@string/setup_footer" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  canRetrieveWindowContent is false and no packages are listed: this service reads
+  nothing. It exists only so performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN) is reachable.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:canRetrieveWindowContent="false"
+    android:description="@string/a11y_description"
+    android:notificationTimeout="1000" />

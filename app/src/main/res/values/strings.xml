@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">DoubleTap Launcher</string>
+
+    <!-- Home screen -->
+    <string name="dock_hint">Swipe up or tap the button below for all apps. Long-press an app there to pin it here.</string>
+    <string name="apps_button_desc">All apps</string>
+
+    <!-- App drawer -->
+    <string name="search_hint">Search apps</string>
+    <string name="no_apps">No matching apps</string>
+    <string name="add_to_dock_action">Pin to dock</string>
+    <string name="remove_from_dock_action">Remove from dock</string>
+    <string name="app_info_action">App info</string>
+    <string name="uninstall_action">Uninstall</string>
+    <string name="added_to_dock">Pinned %1$s to the dock</string>
+    <string name="removed_from_dock">Removed %1$s from the dock</string>
+    <string name="dock_full">The dock holds %1$d apps. Remove one first.</string>
+    <string name="could_not_open">Could not open %1$s</string>
+
+    <!-- Locking -->
+    <string name="lock_failed">Lock request was rejected by the system.</string>
+    <string name="lock_not_configured">Grant a lock permission first.</string>
+
+    <!-- Device admin -->
+    <string name="admin_label">Double tap to lock</string>
+    <string name="admin_description">Allows this launcher to turn off the screen and lock the phone. It claims no other device admin policy.</string>
+    <string name="admin_explanation">This is the only permission that lets an app lock the screen. Nothing else is requested.</string>
+
+    <!-- Accessibility -->
+    <string name="a11y_label">Double tap to lock</string>
+    <string name="a11y_description">Alternative to Device Admin. This service does not read the screen; it only performs the system lock action when you double tap the home screen.</string>
+    <string name="accessibility_hint">Pick \"DoubleTap Launcher\" under Installed apps. On a sideloaded build you may first need Settings ▸ Apps ▸ DoubleTap Launcher ▸ ⋮ ▸ Allow restricted settings.</string>
+
+    <!-- Setup -->
+    <string name="setup_subtitle">Double tap an empty part of the home screen to lock the phone.</string>
+    <string name="setup_step_home">1 · Default home app</string>
+    <string name="setup_step_home_body">The gesture only exists on this launcher\'s own home screen. That is deliberate — it is what makes the home screen and the app drawer reliably distinguishable.</string>
+    <string name="setup_open_home_settings">Open home app settings</string>
+    <string name="setup_step_lock">2 · Permission to lock</string>
+    <string name="setup_step_lock_body">Device Admin is the smoother route on a sideloaded build. The accessibility service does the same job without Device Admin, but Android 13+ hides its toggle behind \"Allow restricted settings\" first.</string>
+    <string name="setup_grant_admin">Grant Device Admin</string>
+    <string name="setup_grant_accessibility">Use accessibility service instead</string>
+    <string name="setup_revoke_admin">Revoke Device Admin</string>
+    <string name="admin_revoked">Device Admin revoked.</string>
+    <string name="setup_options">Options</string>
+    <string name="setup_double_tap_switch">Double tap to lock</string>
+    <string name="setup_haptic_switch">Vibrate on lock</string>
+    <string name="setup_test_lock">Test lock now</string>
+    <string name="setup_footer">To uninstall, revoke Device Admin above first — Android blocks uninstalling an active device admin.</string>
+
+    <string name="home_status_ok">✓ This is your home app</string>
+    <string name="home_status_missing">Not set as your home app yet</string>
+    <string name="lock_status_admin">✓ Ready — using Device Admin</string>
+    <string name="lock_status_a11y">✓ Ready — using accessibility service</string>
+    <string name="lock_status_missing">No lock permission granted yet</string>
+    <string name="could_not_open_settings">Could not open that settings page.</string>
+</resources>

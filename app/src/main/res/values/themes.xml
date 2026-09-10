@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.DoubleTapLauncher" parent="Theme.Material3.DayNight.NoActionBar" />
+
+    <!-- Home: fully transparent so the user's wallpaper is the background. -->
+    <style name="Theme.DoubleTapLauncher.Home" parent="Theme.DoubleTapLauncher">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <!-- Drawer: wallpaper behind a scrim that the layout draws, so alpha blends properly. -->
+    <style name="Theme.DoubleTapLauncher.Drawer" parent="Theme.DoubleTapLauncher">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/DrawerAnimation</item>
+    </style>
+
+    <style name="DrawerAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_up</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_down</item>
+    </style>
+
+    <!-- Setup screen -->
+    <style name="SetupHeading" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">32dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SetupStatus" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SetupBody" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+    </style>
+
+    <style name="SetupButton" parent="Widget.Material3.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">12dp</item>
+    </style>
+
+    <style name="SetupButtonOutlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+</resources>
