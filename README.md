@@ -136,6 +136,36 @@ is an active device admin. If you get stuck:
 
 ---
 
+## Building a signed release APK
+
+One-time: create a keystore **outside** the repo and point `keystore.properties` at it.
+
+```bash
+mkdir -p ~/keystores
+keytool -genkeypair -v \
+  -keystore ~/keystores/doubletaptolock.jks \
+  -alias doubletaptolock \
+  -keyalg RSA -keysize 4096 -validity 10000 \
+  -dname "CN=Amit Bikram Roy, OU=Development, O=Amit Bikram Roy, L=Dhaka, ST=Dhaka, C=BD"
+```
+
+Then `cp keystore.properties.example keystore.properties` and fill in the passwords you
+just chose.
+
+```bash
+./gradlew clean :app:assembleRelease
+# -> app/build/outputs/apk/release/app-release.apk
+```
+
+If the output is named `app-release-unsigned.apk`, `keystore.properties` was not found —
+check it is in the project root and that `storeFile` is a correct absolute path.
+
+> **This repo is public.** `*.jks`, `*.keystore` and `keystore.properties` are gitignored
+> and must stay that way. A committed keystore plus its password lets anyone publish an
+> update signed as you, and git history keeps it even after a later delete. Keep the
+> `.jks` backed up somewhere private — lose it and you cannot ship an upgrade to an
+> already-installed copy, only a fresh install under a new signature.
+
 ## Using it
 
 | Gesture | Action |

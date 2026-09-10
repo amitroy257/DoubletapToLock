@@ -1,3 +1,10 @@
+# Signing material — NEVER commit these. This repo is public: a committed
+# keystore plus its password lets anyone ship an update signed as you, and
+# git history keeps it even after a later delete.
+*.jks
+*.keystore
+keystore.properties
+
 # Gradle / build output — matches at any depth (app/build, etc.)
 build/
 .gradle/
