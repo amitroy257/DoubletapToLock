@@ -1,7 +1,10 @@
-package com.amitroy.doubletaplauncher
+package com.amitroy.doubletaplock
 
+import android.app.StatusBarManager
+import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.graphics.drawable.Icon
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
@@ -12,15 +15,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.materialswitch.MaterialSwitch
 
-/** Setup and settings. This is what the app icon opens, and what a long-press on the wallpaper opens. */
+/** Setup and settings. This is what the app icon opens, and where the tile sends you if it isn't ready. */
 class SetupActivity : AppCompatActivity() {
 
-    private lateinit var prefs: Prefs
     private lateinit var lockController: LockController
 
-    private lateinit var homeStatus: TextView
     private lateinit var lockStatus: TextView
     private lateinit var revokeAdminButton: Button
 
@@ -28,7 +28,6 @@ class SetupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setup)
 
-        prefs = Prefs(this)
         lockController = LockController(this)
 
         val root = findViewById<View>(R.id.setupRoot)
@@ -38,15 +37,8 @@ class SetupActivity : AppCompatActivity() {
             insets
         }
 
-        homeStatus = findViewById(R.id.homeStatus)
         lockStatus = findViewById(R.id.lockStatus)
         revokeAdminButton = findViewById(R.id.revokeAdminButton)
-
-        findViewById<Button>(R.id.setHomeButton).setOnClickListener {
-            // Opens Settings > Apps > Default apps > Home app.
-            runCatching { startActivity(Intent(Settings.ACTION_HOME_SETTINGS)) }
-                .onFailure { toast(getString(R.string.could_not_open_settings)) }
-        }
 
         findViewById<Button>(R.id.grantAdminButton).setOnClickListener {
             runCatching { startActivity(lockController.deviceAdminIntent()) }
@@ -73,14 +65,13 @@ class SetupActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<MaterialSwitch>(R.id.doubleTapSwitch).apply {
-            isChecked = prefs.doubleTapEnabled
-            setOnCheckedChangeListener { _, checked -> prefs.doubleTapEnabled = checked }
-        }
-
-        findViewById<MaterialSwitch>(R.id.hapticSwitch).apply {
-            isChecked = prefs.hapticEnabled
-            setOnCheckedChangeListener { _, checked -> prefs.hapticEnabled = checked }
+        // Android 13+ can offer to place the tile for the user instead of making them
+        // dig through the Quick Settings edit screen. Older versions do it by hand.
+        val addTileButton = findViewById<Button>(R.id.addTileButton)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            addTileButton.setOnClickListener { requestAddTile() }
+        } else {
+            addTileButton.visibility = View.GONE
         }
     }
 
@@ -89,13 +80,21 @@ class SetupActivity : AppCompatActivity() {
         refreshStatus()
     }
 
-    private fun refreshStatus() {
-        val isHome = isDefaultHome()
-        homeStatus.text = getString(
-            if (isHome) R.string.home_status_ok else R.string.home_status_missing
-        )
-        homeStatus.setTextColor(statusColor(isHome))
+    private fun requestAddTile() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        val statusBarManager = getSystemService(StatusBarManager::class.java) ?: return
+        runCatching {
+            statusBarManager.requestAddTileService(
+                ComponentName(this, LockTileService::class.java),
+                getString(R.string.tile_label),
+                Icon.createWithResource(this, R.drawable.ic_lock_tile),
+                { it.run() },
+                { /* result is informational; the system shows its own dialog */ }
+            )
+        }.onFailure { toast(getString(R.string.could_not_open_settings)) }
+    }
 
+    private fun refreshStatus() {
         val adminActive = lockController.isDeviceAdminActive()
         val a11yActive = lockController.isAccessibilityConnected()
         lockStatus.text = when {
@@ -103,19 +102,13 @@ class SetupActivity : AppCompatActivity() {
             a11yActive -> getString(R.string.lock_status_a11y)
             else -> getString(R.string.lock_status_missing)
         }
-        lockStatus.setTextColor(statusColor(adminActive || a11yActive))
+        lockStatus.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (adminActive || a11yActive) R.color.status_ok else R.color.status_warn
+            )
+        )
         revokeAdminButton.visibility = if (adminActive) View.VISIBLE else View.GONE
-    }
-
-    private fun statusColor(ok: Boolean) = ContextCompat.getColor(
-        this,
-        if (ok) R.color.status_ok else R.color.status_warn
-    )
-
-    private fun isDefaultHome(): Boolean {
-        val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
-        val resolved = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
-        return resolved?.activityInfo?.packageName == packageName
     }
 
     private fun toast(message: String) =

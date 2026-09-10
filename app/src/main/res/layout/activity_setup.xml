@@ -32,24 +32,6 @@
             <!-- Step 1 -->
             <TextView
                 style="@style/SetupHeading"
-                android:text="@string/setup_step_home" />
-
-            <TextView
-                android:id="@+id/homeStatus"
-                style="@style/SetupStatus" />
-
-            <TextView
-                style="@style/SetupBody"
-                android:text="@string/setup_step_home_body" />
-
-            <Button
-                android:id="@+id/setHomeButton"
-                style="@style/SetupButton"
-                android:text="@string/setup_open_home_settings" />
-
-            <!-- Step 2 -->
-            <TextView
-                style="@style/SetupHeading"
                 android:text="@string/setup_step_lock" />
 
             <TextView
@@ -76,28 +58,23 @@
                 android:text="@string/setup_revoke_admin"
                 android:visibility="gone" />
 
-            <!-- Options -->
+            <!-- Step 2 -->
             <TextView
                 style="@style/SetupHeading"
-                android:text="@string/setup_options" />
+                android:text="@string/setup_step_tile" />
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/doubleTapSwitch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="@string/setup_double_tap_switch" />
+            <TextView
+                style="@style/SetupBody"
+                android:text="@string/setup_step_tile_body" />
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/hapticSwitch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="@string/setup_haptic_switch" />
+            <Button
+                android:id="@+id/addTileButton"
+                style="@style/SetupButton"
+                android:text="@string/setup_add_tile" />
 
             <Button
                 android:id="@+id/testLockButton"
-                style="@style/SetupButton"
+                style="@style/SetupButtonOutlined"
                 android:text="@string/setup_test_lock" />
 
             <TextView

@@ -18,7 +18,7 @@ val keystoreProperties = Properties().apply {
 val hasSigningConfig = keystorePropertiesFile.exists()
 
 android {
-    namespace = "com.amitroy.doubletaplauncher"
+    namespace = "com.amitroy.doubletaplock"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -26,7 +26,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.amitroy.doubletaplauncher"
+        applicationId = "com.amitroy.doubletaplock"
         minSdk = 28
         targetSdk = 36
         versionCode = 1
@@ -66,6 +66,5 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.ktx)
-    implementation(libs.androidx.recyclerview)
     implementation(libs.material)
 }

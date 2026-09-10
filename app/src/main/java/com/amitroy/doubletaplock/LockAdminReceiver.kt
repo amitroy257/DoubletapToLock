@@ -1,4 +1,4 @@
-package com.amitroy.doubletaplauncher
+package com.amitroy.doubletaplock
 
 import android.app.admin.DeviceAdminReceiver
 
