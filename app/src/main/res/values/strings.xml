@@ -1,43 +1,54 @@
 <resources>
     <string name="app_name">Quick Lock</string>
 
-    <!-- Quick Settings tile -->
-    <string name="tile_label">Lock</string>
-    <string name="tile_subtitle_ready">Tap to lock</string>
-    <string name="tile_subtitle_setup">Setup needed</string>
+    <!-- Tiles -->
+    <string name="tile_screen_label">Screen Lock</string>
+    <string name="tile_screen_ready">Fingerprint OK</string>
+    <string name="tile_screen_setup">Setup needed</string>
+
+    <string name="tile_secure_label">Secure Lock</string>
+    <string name="tile_secure_ready">PIN required</string>
+    <string name="tile_secure_setup">Setup needed</string>
 
     <!-- Locking -->
     <string name="lock_failed">Lock request was rejected by the system.</string>
-    <string name="lock_not_configured">Grant a lock permission first.</string>
+    <string name="lock_not_configured">Grant the permission for this lock first.</string>
 
     <!-- Device admin -->
     <string name="admin_label">Quick Lock</string>
     <string name="admin_description">Allows this app to turn off the screen and lock the phone. It claims no other device admin policy.</string>
-    <string name="admin_explanation">This is the only permission that lets an app lock the screen. Nothing else is requested.</string>
+    <string name="admin_explanation">This is what powers the Secure Lock tile. It claims only the screen-lock policy — nothing else is requested.</string>
 
     <!-- Accessibility -->
     <string name="a11y_label">Quick Lock</string>
-    <string name="a11y_description">Alternative to Device Admin. This service does not read the screen; it only performs the system lock action when you tap the tile.</string>
-    <string name="accessibility_hint">Pick \"Quick Lock\" under Installed apps. On a sideloaded build you may first need Settings ▸ Apps ▸ Quick Lock ▸ ⋮ ▸ Allow restricted settings.</string>
+    <string name="a11y_description">Powers the Screen Lock tile. This service does not read the screen; it only performs the system lock action when you tap the tile.</string>
+    <string name="accessibility_hint">Pick \"Quick Lock\" under Installed apps. If the toggle is greyed out, first do Settings ▸ Apps ▸ Quick Lock ▸ ⋮ ▸ Allow restricted settings.</string>
 
     <!-- Setup -->
-    <string name="setup_subtitle">Locks the screen from a Quick Settings tile. Works from any app, not just the home screen.</string>
+    <string name="setup_subtitle">Two lock tiles. They differ in what the phone asks for when you come back.</string>
 
-    <string name="setup_step_lock">1 · Permission to lock</string>
-    <string name="setup_step_lock_body">Device Admin is the smoother route on a sideloaded build. The accessibility service does the same job without Device Admin, but Android 13+ hides its toggle behind \"Allow restricted settings\" first.</string>
+    <!-- Section 1: screen lock -->
+    <string name="setup_screen_heading">Screen Lock — fingerprint works</string>
+    <string name="setup_screen_body">The same thing the power button does. The keyguard comes up in its ordinary state, so your fingerprint unlocks it.\n\nRuns through the accessibility service. That service reads nothing and adds no window — it exists only because Android requires the lock action to be called from inside one.</string>
+    <string name="setup_enable_a11y">Enable accessibility service</string>
+    <string name="setup_add_screen_tile">Add Screen Lock tile</string>
+    <string name="setup_test_screen">Test Screen Lock</string>
+
+    <!-- Section 2: secure lock -->
+    <string name="setup_secure_heading">Secure Lock — PIN required</string>
+    <string name="setup_secure_body">Locks and demands your PIN, pattern or password on the way back in — fingerprint is refused, the same state the phone is in after a reboot.\n\nThat is not a bug to work around: Device Admin\'s lockNow() sets a strong-auth flag the system controls, and no app can opt out of it. Useful when you are handing the phone to someone.</string>
     <string name="setup_grant_admin">Grant Device Admin</string>
-    <string name="setup_grant_accessibility">Use accessibility service instead</string>
+    <string name="setup_add_secure_tile">Add Secure Lock tile</string>
+    <string name="setup_test_secure">Test Secure Lock</string>
     <string name="setup_revoke_admin">Revoke Device Admin</string>
     <string name="admin_revoked">Device Admin revoked.</string>
 
-    <string name="setup_step_tile">2 · Add the tile</string>
-    <string name="setup_step_tile_body">Swipe down twice, tap the pencil (edit) button, then drag \"Lock\" up into your active tiles. On Android 13+ the button below asks the system to place it for you.</string>
-    <string name="setup_add_tile">Add tile to Quick Settings</string>
-    <string name="setup_test_lock">Test lock now</string>
-    <string name="setup_footer">To uninstall, revoke Device Admin above first — Android blocks uninstalling an active device admin.</string>
+    <string name="setup_tile_hint">No button below Android 13 — swipe down twice, tap the pencil, drag the tile in by hand.</string>
+    <string name="setup_footer">To uninstall, revoke Device Admin first — Android blocks uninstalling an active device admin.</string>
 
-    <string name="lock_status_admin">✓ Ready — using Device Admin</string>
-    <string name="lock_status_a11y">✓ Ready — using accessibility service</string>
-    <string name="lock_status_missing">No lock permission granted yet</string>
+    <string name="status_ready_a11y">✓ Accessibility service enabled</string>
+    <string name="status_missing_a11y">Accessibility service not enabled</string>
+    <string name="status_ready_admin">✓ Device Admin granted</string>
+    <string name="status_missing_admin">Device Admin not granted</string>
     <string name="could_not_open_settings">Could not open that settings page.</string>
 </resources>

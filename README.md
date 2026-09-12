@@ -1,9 +1,14 @@
 # Quick Lock
 
-A Quick Settings tile that locks the screen. Keeps your normal launcher — this is not a
+Two Quick Settings tiles that lock the screen. Keeps your normal launcher — this is not a
 launcher replacement and changes nothing about your home screen.
 
-Swipe down, tap **Lock**, screen off. Works from inside any app.
+| Tile | Route | Coming back in |
+|---|---|---|
+| **Screen Lock** | accessibility `GLOBAL_ACTION_LOCK_SCREEN` | fingerprint works |
+| **Secure Lock** | Device Admin `lockNow()` | PIN / pattern / password only |
+
+Use either, both, or neither — they depend on different permissions and work independently.
 
 Built against AGP 9.2.1 / Gradle 9.4.1, `minSdk 28`, `targetSdk 36`.
 
@@ -43,33 +48,49 @@ would fire constantly by accident. On a dedicated target that reason disappears.
 > The full double-tap launcher is still in git history if you ever want it:
 > `git show b2626d5`
 
-## Lock, not unlock
-
-An app cannot unlock the phone. While the device is locked no app is foreground to receive
-a tap, and dismissing the keyguard requires a biometric or PIN. Double-tap-to-wake is a
-display-controller feature the Pixel 6a does not expose to apps either.
-
 ---
+
+## Why two tiles
+
+`DevicePolicyManager.lockNow()` does not merely lock the screen. It also sets the
+framework's `STRONG_AUTH_REQUIRED_AFTER_DPM_LOCK_NOW` flag, which tells the keyguard to
+accept only PIN, pattern or password on the next unlock and to refuse biometrics — the
+same state the phone is in after a reboot or after the periodic strong-auth timeout.
+
+That is deliberate on Android's part: an admin-initiated lock is treated as a security
+event. **It cannot be opted out of from the app side.** There is no flag to `lockNow()`
+that suppresses it and the system sets it rather than the app, so the only way to get a
+biometric-friendly lock is to not use Device Admin for it.
+
+`performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)` (API 28+) does not set that flag. It is
+the power-button equivalent: screen off, ordinary keyguard, fingerprint works. It has to
+live inside an `AccessibilityService` because that is the only place the call is reachable
+from — the service here reads no events, resolves no packages and adds no window.
+
+So the PIN-only behaviour is not a defect to route around; it is a different tool. It is
+what you want when handing the phone to someone, and not what you want forty times a day.
+Each route gets its own tile so the choice is made at tap time.
 
 ## Setup
 
-1. Install and open **Quick Lock**.
-2. **Grant Device Admin** — this is the permission that allows `lockNow()`.
-3. **Add tile to Quick Settings** (Android 13+ places it for you). Otherwise: swipe down
-   twice → pencil/edit → drag **Lock** into your active tiles.
+Open **Quick Lock**. Each section is independent — set up whichever tiles you want.
 
-### Device Admin vs the accessibility service
+**Screen Lock** (the everyday one)
 
-Device Admin is the default because it is one toggle and is not affected by the
-"Restricted setting" wall Android 13+ puts in front of accessibility services for
-sideloaded APKs. It claims exactly one policy, `force-lock` (see
-`res/xml/device_admin.xml`) — it cannot wipe the device or touch security settings.
+1. *Enable accessibility service* → pick **Quick Lock** under Installed apps.
+   If the toggle is greyed out, first: Settings ▸ Apps ▸ Quick Lock ▸ ⋮ ▸
+   **Allow restricted settings**. Android 13+ puts that wall in front of accessibility
+   services for sideloaded APKs.
+2. *Add Screen Lock tile*.
 
-The accessibility route (`performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)`) is offered as
-an alternative. The service reads no events, resolves no packages and adds no window; it
-exists only because that call must come from inside an `AccessibilityService`. To enable
-it you'll likely need **Settings ▸ Apps ▸ Quick Lock ▸ ⋮ ▸ Allow restricted settings**
-first.
+**Secure Lock** (PIN-only, optional)
+
+1. *Grant Device Admin* — claims exactly one policy, `force-lock` (see
+   `res/xml/device_admin.xml`). It cannot wipe the device or change security settings.
+2. *Add Secure Lock tile*.
+
+On Android 13+ the add-tile buttons ask the system to place the tile for you. Below that,
+swipe down twice → pencil/edit → drag the tile in by hand.
 
 ### Uninstalling
 
@@ -80,7 +101,11 @@ is an active device admin. If you get stuck:
 adb shell dpm remove-active-admin com.amitroy.doubletaplock/.LockAdminReceiver
 ```
 
----
+## Lock, not unlock
+
+An app cannot *unlock* the phone. While the device is locked no app is foreground to
+receive a tap, and dismissing the keyguard requires a biometric or PIN. Double-tap-to-wake
+is a display-controller feature the Pixel 6a does not expose to apps either.
 
 ## Building a signed release APK
 
@@ -116,8 +141,10 @@ If the output is named `app-release-unsigned.apk`, `keystore.properties` was not
 
 ```
 app/src/main/java/com/amitroy/doubletaplock/
-├── LockTileService.kt           # the Quick Settings tile
-├── LockController.kt            # Device Admin, accessibility fallback
+├── LockTileBase.kt              # shared tile behaviour
+├── ScreenLockTileService.kt     # "Screen Lock"  -> fingerprint works
+├── LockTileService.kt           # "Secure Lock"  -> PIN required
+├── LockController.kt            # both lock routes, and why they differ
 ├── LockAdminReceiver.kt         # claims force-lock only
 ├── LockAccessibilityService.kt  # capability only; reads nothing
 └── SetupActivity.kt             # permissions + add-tile

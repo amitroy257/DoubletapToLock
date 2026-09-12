@@ -23,14 +23,32 @@
         </activity>
 
         <!--
-          The Quick Settings tile. The user adds it themselves from the QS edit screen,
-          which is why no permission beyond BIND_QUICK_SETTINGS_TILE is involved.
+          Everyday lock. Power-button equivalent via the accessibility service, so the
+          keyguard comes up normally and fingerprint unlocks it.
+        -->
+        <service
+            android:name=".ScreenLockTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_lock_tile"
+            android:label="@string/tile_screen_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="false" />
+        </service>
+
+        <!--
+          Secure lock. DevicePolicyManager.lockNow() sets STRONG_AUTH_REQUIRED_AFTER_
+          DPM_LOCK_NOW, so the next unlock demands PIN and refuses biometrics.
         -->
         <service
             android:name=".LockTileService"
             android:exported="true"
             android:icon="@drawable/ic_lock_tile"
-            android:label="@string/tile_label"
+            android:label="@string/tile_secure_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />

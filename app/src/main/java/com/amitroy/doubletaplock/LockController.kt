@@ -9,31 +9,42 @@ enum class LockResult {
     /** The screen is now off. */
     LOCKED,
 
-    /** Neither lock method has been granted yet — send the user to setup. */
+    /** The permission this route needs has not been granted — send the user to setup. */
     NOT_CONFIGURED,
 
-    /** A method was granted but the call was rejected. */
+    /** The permission was granted but the call was rejected. */
     FAILED
 }
 
 /**
- * Turns the screen off and locks the device.
+ * Two ways to lock the screen. They are **not** interchangeable: they differ in what the
+ * phone demands from you on the way back in.
  *
- * Two routes, in preference order:
+ * ── Normal lock — accessibility, [lockNormal] ─────────────────────────────────────────
  *
- *  1. **Device Admin** → `DevicePolicyManager.lockNow()`. One toggle, works on every
- *     Android version, and is not affected by the "Restricted setting" wall that
- *     Android 13+ puts in front of accessibility services for sideloaded APKs. This is
- *     the recommended route for a phone you flash from Android Studio.
+ * `performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)`, API 28+. Equivalent to pressing the
+ * power button: screen off, keyguard in its ordinary state, **fingerprint works**.
  *
- *  2. **Accessibility** → `performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)`, API 28+.
- *     No Device Admin needed, so nothing blocks a plain uninstall — but enabling it on a
- *     sideloaded build takes the extra "Allow restricted settings" detour.
+ * ── Secure lock — Device Admin, [lockSecure] ──────────────────────────────────────────
  *
- * Note there is no third route. An app cannot *unlock* the device: while the phone is
- * locked no app is in the foreground to receive a tap, and dismissing the keyguard
- * requires the user's biometric or PIN. Double-tap-to-wake is a display-controller
- * feature the Pixel 6a does not expose to apps either. Lock is the achievable half.
+ * `DevicePolicyManager.lockNow()` locks *and* sets the framework's
+ * `STRONG_AUTH_REQUIRED_AFTER_DPM_LOCK_NOW` flag. That flag tells the keyguard to accept
+ * only PIN, pattern or password on the next unlock and to refuse biometrics — the same
+ * state the phone enters after a reboot or the periodic strong-auth timeout.
+ *
+ * This is deliberate on Android's part: an admin-initiated lock is treated as a security
+ * event. It cannot be opted out of from the app side. There is no flag to `lockNow()`
+ * that suppresses it, and it is set by the system rather than by this code, so the only
+ * way to get a biometric-friendly lock is to not use Device Admin for it.
+ *
+ * ── Why keep both ─────────────────────────────────────────────────────────────────────
+ *
+ * The PIN-only behaviour is a feature when you actually want it — handing the phone over,
+ * or putting it down somewhere you would rather a sleeping fingerprint could not open it.
+ * Each route is wired to its own Quick Settings tile so the choice is made at tap time.
+ *
+ * Note there is no route that *unlocks*. While the phone is locked no app is foreground
+ * to receive input, and dismissing the keyguard requires the user's own biometric or PIN.
  */
 class LockController(private val context: Context) {
 
@@ -49,19 +60,21 @@ class LockController(private val context: Context) {
 
     fun isConfigured(): Boolean = isDeviceAdminActive() || isAccessibilityConnected()
 
-    fun lock(): LockResult {
-        if (isDeviceAdminActive()) {
-            return try {
-                dpm.lockNow()
-                LockResult.LOCKED
-            } catch (e: SecurityException) {
-                LockResult.FAILED
-            }
+    /** Power-button-equivalent lock. Fingerprint unlocks afterwards. Needs the a11y service. */
+    fun lockNormal(): LockResult {
+        if (!LockAccessibilityService.isConnected) return LockResult.NOT_CONFIGURED
+        return if (LockAccessibilityService.lockNow()) LockResult.LOCKED else LockResult.FAILED
+    }
+
+    /** Admin lock. Forces PIN/pattern/password on the next unlock. Needs Device Admin. */
+    fun lockSecure(): LockResult {
+        if (!isDeviceAdminActive()) return LockResult.NOT_CONFIGURED
+        return try {
+            dpm.lockNow()
+            LockResult.LOCKED
+        } catch (e: SecurityException) {
+            LockResult.FAILED
         }
-        if (LockAccessibilityService.isConnected) {
-            return if (LockAccessibilityService.lockNow()) LockResult.LOCKED else LockResult.FAILED
-        }
-        return LockResult.NOT_CONFIGURED
     }
 
     /** Consent screen for activating Device Admin. */

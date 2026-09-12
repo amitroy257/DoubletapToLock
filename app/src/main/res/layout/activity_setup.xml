@@ -1,87 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/setupRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:text="@string/app_name"
+            android:textSize="28sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textSize="28sp"
-                android:textStyle="bold" />
+        <TextView
+            style="@style/SetupBody"
+            android:layout_marginTop="6dp"
+            android:text="@string/setup_subtitle" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@string/setup_subtitle"
-                android:textSize="14sp" />
+        <!-- ── Screen Lock ───────────────────────────────────────────── -->
+        <TextView
+            style="@style/SetupHeading"
+            android:text="@string/setup_screen_heading" />
 
-            <!-- Step 1 -->
-            <TextView
-                style="@style/SetupHeading"
-                android:text="@string/setup_step_lock" />
+        <TextView
+            android:id="@+id/a11yStatus"
+            style="@style/SetupStatus" />
 
-            <TextView
-                android:id="@+id/lockStatus"
-                style="@style/SetupStatus" />
+        <TextView
+            style="@style/SetupBody"
+            android:text="@string/setup_screen_body" />
 
-            <TextView
-                style="@style/SetupBody"
-                android:text="@string/setup_step_lock_body" />
+        <Button
+            android:id="@+id/enableA11yButton"
+            style="@style/SetupButton"
+            android:text="@string/setup_enable_a11y" />
 
-            <Button
-                android:id="@+id/grantAdminButton"
-                style="@style/SetupButton"
-                android:text="@string/setup_grant_admin" />
+        <Button
+            android:id="@+id/addScreenTileButton"
+            style="@style/SetupButtonOutlined"
+            android:text="@string/setup_add_screen_tile" />
 
-            <Button
-                android:id="@+id/grantAccessibilityButton"
-                style="@style/SetupButtonOutlined"
-                android:text="@string/setup_grant_accessibility" />
+        <Button
+            android:id="@+id/testScreenButton"
+            style="@style/SetupButtonOutlined"
+            android:text="@string/setup_test_screen" />
 
-            <Button
-                android:id="@+id/revokeAdminButton"
-                style="@style/SetupButtonOutlined"
-                android:text="@string/setup_revoke_admin"
-                android:visibility="gone" />
+        <!-- ── Secure Lock ───────────────────────────────────────────── -->
+        <TextView
+            style="@style/SetupHeading"
+            android:text="@string/setup_secure_heading" />
 
-            <!-- Step 2 -->
-            <TextView
-                style="@style/SetupHeading"
-                android:text="@string/setup_step_tile" />
+        <TextView
+            android:id="@+id/adminStatus"
+            style="@style/SetupStatus" />
 
-            <TextView
-                style="@style/SetupBody"
-                android:text="@string/setup_step_tile_body" />
+        <TextView
+            style="@style/SetupBody"
+            android:text="@string/setup_secure_body" />
 
-            <Button
-                android:id="@+id/addTileButton"
-                style="@style/SetupButton"
-                android:text="@string/setup_add_tile" />
+        <Button
+            android:id="@+id/grantAdminButton"
+            style="@style/SetupButton"
+            android:text="@string/setup_grant_admin" />
 
-            <Button
-                android:id="@+id/testLockButton"
-                style="@style/SetupButtonOutlined"
-                android:text="@string/setup_test_lock" />
+        <Button
+            android:id="@+id/addSecureTileButton"
+            style="@style/SetupButtonOutlined"
+            android:text="@string/setup_add_secure_tile" />
 
-            <TextView
-                style="@style/SetupBody"
-                android:layout_marginTop="28dp"
-                android:text="@string/setup_footer" />
+        <Button
+            android:id="@+id/testSecureButton"
+            style="@style/SetupButtonOutlined"
+            android:text="@string/setup_test_secure" />
 
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+        <Button
+            android:id="@+id/revokeAdminButton"
+            style="@style/SetupButtonOutlined"
+            android:text="@string/setup_revoke_admin"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tileHint"
+            style="@style/SetupBody"
+            android:layout_marginTop="24dp"
+            android:text="@string/setup_tile_hint"
+            android:visibility="gone" />
+
+        <TextView
+            style="@style/SetupBody"
+            android:layout_marginTop="24dp"
+            android:text="@string/setup_footer" />
+
+    </LinearLayout>
+</ScrollView>

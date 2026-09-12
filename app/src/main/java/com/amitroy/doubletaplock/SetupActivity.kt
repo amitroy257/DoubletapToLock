@@ -16,12 +16,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-/** Setup and settings. This is what the app icon opens, and where the tile sends you if it isn't ready. */
+/**
+ * Setup and settings. One section per tile, because the two tiles depend on different
+ * permissions and either can work without the other.
+ */
 class SetupActivity : AppCompatActivity() {
 
     private lateinit var lockController: LockController
 
-    private lateinit var lockStatus: TextView
+    private lateinit var a11yStatus: TextView
+    private lateinit var adminStatus: TextView
     private lateinit var revokeAdminButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,18 +41,27 @@ class SetupActivity : AppCompatActivity() {
             insets
         }
 
-        lockStatus = findViewById(R.id.lockStatus)
+        a11yStatus = findViewById(R.id.a11yStatus)
+        adminStatus = findViewById(R.id.adminStatus)
         revokeAdminButton = findViewById(R.id.revokeAdminButton)
 
-        findViewById<Button>(R.id.grantAdminButton).setOnClickListener {
-            runCatching { startActivity(lockController.deviceAdminIntent()) }
-                .onFailure { toast(getString(R.string.could_not_open_settings)) }
+        // ── Screen Lock (fingerprint works) ──────────────────────────────────────────
+        findViewById<Button>(R.id.enableA11yButton).setOnClickListener {
+            toast(getString(R.string.accessibility_hint))
+            openSettings(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
 
-        findViewById<Button>(R.id.grantAccessibilityButton).setOnClickListener {
-            toast(getString(R.string.accessibility_hint))
-            runCatching { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
-                .onFailure { toast(getString(R.string.could_not_open_settings)) }
+        findViewById<Button>(R.id.testScreenButton).setOnClickListener {
+            report(lockController.lockNormal())
+        }
+
+        // ── Secure Lock (PIN required) ───────────────────────────────────────────────
+        findViewById<Button>(R.id.grantAdminButton).setOnClickListener {
+            openSettings(lockController.deviceAdminIntent())
+        }
+
+        findViewById<Button>(R.id.testSecureButton).setOnClickListener {
+            report(lockController.lockSecure())
         }
 
         revokeAdminButton.setOnClickListener {
@@ -57,21 +70,21 @@ class SetupActivity : AppCompatActivity() {
             toast(getString(R.string.admin_revoked))
         }
 
-        findViewById<Button>(R.id.testLockButton).setOnClickListener {
-            when (lockController.lock()) {
-                LockResult.LOCKED -> Unit
-                LockResult.FAILED -> toast(getString(R.string.lock_failed))
-                LockResult.NOT_CONFIGURED -> toast(getString(R.string.lock_not_configured))
-            }
-        }
-
-        // Android 13+ can offer to place the tile for the user instead of making them
-        // dig through the Quick Settings edit screen. Older versions do it by hand.
-        val addTileButton = findViewById<Button>(R.id.addTileButton)
+        // Android 13+ can place a tile for the user. Below that it is a manual drag, so
+        // the buttons come off and a hint explains where to go instead.
+        val addScreen = findViewById<Button>(R.id.addScreenTileButton)
+        val addSecure = findViewById<Button>(R.id.addSecureTileButton)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            addTileButton.setOnClickListener { requestAddTile() }
+            addScreen.setOnClickListener {
+                requestAddTile(ScreenLockTileService::class.java, R.string.tile_screen_label)
+            }
+            addSecure.setOnClickListener {
+                requestAddTile(LockTileService::class.java, R.string.tile_secure_label)
+            }
         } else {
-            addTileButton.visibility = View.GONE
+            addScreen.visibility = View.GONE
+            addSecure.visibility = View.GONE
+            findViewById<TextView>(R.id.tileHint).visibility = View.VISIBLE
         }
     }
 
@@ -80,13 +93,13 @@ class SetupActivity : AppCompatActivity() {
         refreshStatus()
     }
 
-    private fun requestAddTile() {
+    private fun requestAddTile(service: Class<out LockTileBase>, labelRes: Int) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
         val statusBarManager = getSystemService(StatusBarManager::class.java) ?: return
         runCatching {
             statusBarManager.requestAddTileService(
-                ComponentName(this, LockTileService::class.java),
-                getString(R.string.tile_label),
+                ComponentName(this, service),
+                getString(labelRes),
                 Icon.createWithResource(this, R.drawable.ic_lock_tile),
                 { it.run() },
                 { /* result is informational; the system shows its own dialog */ }
@@ -95,20 +108,31 @@ class SetupActivity : AppCompatActivity() {
     }
 
     private fun refreshStatus() {
-        val adminActive = lockController.isDeviceAdminActive()
-        val a11yActive = lockController.isAccessibilityConnected()
-        lockStatus.text = when {
-            adminActive -> getString(R.string.lock_status_admin)
-            a11yActive -> getString(R.string.lock_status_a11y)
-            else -> getString(R.string.lock_status_missing)
-        }
-        lockStatus.setTextColor(
-            ContextCompat.getColor(
-                this,
-                if (adminActive || a11yActive) R.color.status_ok else R.color.status_warn
-            )
+        val a11yOn = lockController.isAccessibilityConnected()
+        setStatus(a11yStatus, a11yOn, R.string.status_ready_a11y, R.string.status_missing_a11y)
+
+        val adminOn = lockController.isDeviceAdminActive()
+        setStatus(adminStatus, adminOn, R.string.status_ready_admin, R.string.status_missing_admin)
+
+        revokeAdminButton.visibility = if (adminOn) View.VISIBLE else View.GONE
+    }
+
+    private fun setStatus(view: TextView, ok: Boolean, okRes: Int, missingRes: Int) {
+        view.text = getString(if (ok) okRes else missingRes)
+        view.setTextColor(
+            ContextCompat.getColor(this, if (ok) R.color.status_ok else R.color.status_warn)
         )
-        revokeAdminButton.visibility = if (adminActive) View.VISIBLE else View.GONE
+    }
+
+    private fun report(result: LockResult) = when (result) {
+        LockResult.LOCKED -> Unit // screen is already off
+        LockResult.FAILED -> toast(getString(R.string.lock_failed))
+        LockResult.NOT_CONFIGURED -> toast(getString(R.string.lock_not_configured))
+    }
+
+    private fun openSettings(intent: Intent) {
+        runCatching { startActivity(intent) }
+            .onFailure { toast(getString(R.string.could_not_open_settings)) }
     }
 
     private fun toast(message: String) =
