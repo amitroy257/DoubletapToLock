@@ -1,0 +1,37 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFFFF">
+    <!--
+      Fingerprint ridges. Deliberately NOT concentric circles: equal radii with a
+      symmetric gap at the bottom render as a wifi/signal glyph. These are tall ellipses
+      closing to ~320 degrees with offset centres and uneven ends, which is what makes
+      them read as a fingerprint at tile size.
+    -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.45"
+        android:strokeLineCap="round"
+        android:pathData="M10.06,21.09 A7.5,9.2 0 1,1 15.17,20.54" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.45"
+        android:strokeLineCap="round"
+        android:pathData="M11.04,19.29 A5.5,7 0 1,1 13.88,18.98" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.45"
+        android:strokeLineCap="round"
+        android:pathData="M10.97,17.33 A3.6,4.9 0 1,1 12.83,17.33" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.45"
+        android:strokeLineCap="round"
+        android:pathData="M11.28,15.44 A1.8,2.7 0 1,1 12.52,15.44" />
+</vector>

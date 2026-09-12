@@ -29,7 +29,7 @@
         <service
             android:name=".ScreenLockTileService"
             android:exported="true"
-            android:icon="@drawable/ic_lock_tile"
+            android:icon="@drawable/ic_tile_fingerprint"
             android:label="@string/tile_screen_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
@@ -47,7 +47,7 @@
         <service
             android:name=".LockTileService"
             android:exported="true"
-            android:icon="@drawable/ic_lock_tile"
+            android:icon="@drawable/ic_tile_shield_lock"
             android:label="@string/tile_secure_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>

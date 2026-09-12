@@ -3,10 +3,10 @@
 Two Quick Settings tiles that lock the screen. Keeps your normal launcher — this is not a
 launcher replacement and changes nothing about your home screen.
 
-| Tile | Route | Coming back in |
-|---|---|---|
-| **Screen Lock** | accessibility `GLOBAL_ACTION_LOCK_SCREEN` | fingerprint works |
-| **Secure Lock** | Device Admin `lockNow()` | PIN / pattern / password only |
+| Tile | Icon | Route | Coming back in |
+|---|---|---|---|
+| **Screen Lock** | fingerprint ridges | accessibility `GLOBAL_ACTION_LOCK_SCREEN` | fingerprint works |
+| **Secure Lock** | padlock in a shield | Device Admin `lockNow()` | PIN / pattern / password only |
 
 Use either, both, or neither — they depend on different permissions and work independently.
 

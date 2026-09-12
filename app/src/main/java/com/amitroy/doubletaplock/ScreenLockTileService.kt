@@ -11,6 +11,7 @@ package com.amitroy.doubletaplock
 class ScreenLockTileService : LockTileBase() {
     override fun isReady() = lockController.isAccessibilityConnected()
     override fun performLock() = lockController.lockNormal()
+    override val iconRes = R.drawable.ic_tile_fingerprint
     override val labelRes = R.string.tile_screen_label
     override val readySubtitleRes = R.string.tile_screen_ready
     override val setupSubtitleRes = R.string.tile_screen_setup

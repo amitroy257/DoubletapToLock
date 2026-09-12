@@ -22,6 +22,7 @@ abstract class LockTileBase : TileService() {
 
     protected abstract fun isReady(): Boolean
     protected abstract fun performLock(): LockResult
+    protected abstract val iconRes: Int
     protected abstract val labelRes: Int
     protected abstract val readySubtitleRes: Int
     protected abstract val setupSubtitleRes: Int
@@ -52,7 +53,7 @@ abstract class LockTileBase : TileService() {
         val tile = qsTile ?: return
         val ready = isReady()
         tile.state = if (ready) Tile.STATE_INACTIVE else Tile.STATE_UNAVAILABLE
-        tile.icon = Icon.createWithResource(this, R.drawable.ic_lock_tile)
+        tile.icon = Icon.createWithResource(this, iconRes)
         tile.label = getString(labelRes)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             tile.subtitle = getString(if (ready) readySubtitleRes else setupSubtitleRes)

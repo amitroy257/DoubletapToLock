@@ -10,6 +10,7 @@ package com.amitroy.doubletaplock
 class LockTileService : LockTileBase() {
     override fun isReady() = lockController.isDeviceAdminActive()
     override fun performLock() = lockController.lockSecure()
+    override val iconRes = R.drawable.ic_tile_shield_lock
     override val labelRes = R.string.tile_secure_label
     override val readySubtitleRes = R.string.tile_secure_ready
     override val setupSubtitleRes = R.string.tile_secure_setup

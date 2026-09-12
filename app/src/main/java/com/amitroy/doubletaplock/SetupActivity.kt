@@ -76,10 +76,18 @@ class SetupActivity : AppCompatActivity() {
         val addSecure = findViewById<Button>(R.id.addSecureTileButton)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             addScreen.setOnClickListener {
-                requestAddTile(ScreenLockTileService::class.java, R.string.tile_screen_label)
+                requestAddTile(
+                    ScreenLockTileService::class.java,
+                    R.string.tile_screen_label,
+                    R.drawable.ic_tile_fingerprint
+                )
             }
             addSecure.setOnClickListener {
-                requestAddTile(LockTileService::class.java, R.string.tile_secure_label)
+                requestAddTile(
+                    LockTileService::class.java,
+                    R.string.tile_secure_label,
+                    R.drawable.ic_tile_shield_lock
+                )
             }
         } else {
             addScreen.visibility = View.GONE
@@ -93,14 +101,14 @@ class SetupActivity : AppCompatActivity() {
         refreshStatus()
     }
 
-    private fun requestAddTile(service: Class<out LockTileBase>, labelRes: Int) {
+    private fun requestAddTile(service: Class<out LockTileBase>, labelRes: Int, iconRes: Int) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
         val statusBarManager = getSystemService(StatusBarManager::class.java) ?: return
         runCatching {
             statusBarManager.requestAddTileService(
                 ComponentName(this, service),
                 getString(labelRes),
-                Icon.createWithResource(this, R.drawable.ic_lock_tile),
+                Icon.createWithResource(this, iconRes),
                 { it.run() },
                 { /* result is informational; the system shows its own dialog */ }
             )
